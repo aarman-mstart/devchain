@@ -1,13 +1,12 @@
 package app
 
 import (
-
 	clienthelpers "cosmossdk.io/client/v2/helpers"
 	"cosmossdk.io/core/appmodule"
 	"cosmossdk.io/depinject"
 	"cosmossdk.io/log/v2"
-	storetypes "github.com/cosmos/cosmos-sdk/store/v2/types"
 	circuitkeeper "github.com/cosmos/cosmos-sdk/contrib/x/circuit/keeper"
+	storetypes "github.com/cosmos/cosmos-sdk/store/v2/types"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 
 	abci "github.com/cometbft/cometbft/abci/types"

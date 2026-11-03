@@ -27,6 +27,18 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					RpcMethod: "UpdateParams",
 					Skip:      true, // skipped because authority gated
 				},
+				{
+					RpcMethod:      "MintToken",
+					Use:            "mint-token [denom] [amount]",
+					Short:          "Send a mint-token tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}, {ProtoField: "amount"}},
+				},
+				{
+					RpcMethod:      "BurnToken",
+					Use:            "burn-token [denom] [amount]",
+					Short:          "Send a burn-token tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}, {ProtoField: "amount"}},
+				},
 			},
 		},
 	}

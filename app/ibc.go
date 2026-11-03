@@ -2,10 +2,10 @@ package app
 
 import (
 	"cosmossdk.io/core/appmodule"
-	storetypes "github.com/cosmos/cosmos-sdk/store/v2/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/v2/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -43,46 +43,46 @@ func (app *App) registerIBCModules(appOpts servertypes.AppOptions) error {
 		return err
 	}
 
-
 	govModuleAddr, _ := app.AuthKeeper.AddressCodec().BytesToString(authtypes.NewModuleAddress(govtypes.ModuleName))
 
 	// Create IBC keeper
 	app.IBCKeeper = ibckeeper.NewKeeper(
-        app.appCodec,
-        runtime.NewKVStoreService(app.GetKey(ibcexported.StoreKey)),
-        app.UpgradeKeeper,
-        govModuleAddr,
+		app.appCodec,
+		runtime.NewKVStoreService(app.GetKey(ibcexported.StoreKey)),
+		app.UpgradeKeeper,
+		govModuleAddr,
+		
 	)
 
 	// Create IBC transfer keeper
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
-        app.appCodec,
-        app.AuthKeeper.AddressCodec(), // new in v11
-        runtime.NewKVStoreService(app.GetKey(ibctransfertypes.StoreKey)),
-        app.IBCKeeper.ChannelKeeper,
-        app.MsgServiceRouter(),
-        app.AuthKeeper,
-        app.BankKeeper,
-        govModuleAddr,
+		app.appCodec,
+		app.AuthKeeper.AddressCodec(), // new in v11
+		runtime.NewKVStoreService(app.GetKey(ibctransfertypes.StoreKey)),
+		app.IBCKeeper.ChannelKeeper,
+		app.MsgServiceRouter(),
+		app.AuthKeeper,
+		app.BankKeeper,
+		govModuleAddr,
 	)
 
 	// Create interchain account keepers
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
-        app.appCodec,
-        runtime.NewKVStoreService(app.GetKey(icahosttypes.StoreKey)),
-        app.IBCKeeper.ChannelKeeper,
-        app.AuthKeeper,
-        app.MsgServiceRouter(),
-        app.GRPCQueryRouter(),
-        govModuleAddr,
+		app.appCodec,
+		runtime.NewKVStoreService(app.GetKey(icahosttypes.StoreKey)),
+		app.IBCKeeper.ChannelKeeper,
+		app.AuthKeeper,
+		app.MsgServiceRouter(),
+		app.GRPCQueryRouter(),
+		govModuleAddr,
 	)
 
 	app.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
-        app.appCodec,
-        runtime.NewKVStoreService(app.GetKey(icacontrollertypes.StoreKey)),
-        app.IBCKeeper.ChannelKeeper,
-        app.MsgServiceRouter(),
-        govModuleAddr,
+		app.appCodec,
+		runtime.NewKVStoreService(app.GetKey(icacontrollertypes.StoreKey)),
+		app.IBCKeeper.ChannelKeeper,
+		app.MsgServiceRouter(),
+		govModuleAddr,
 	)
 
 	// create IBC module from bottom to top of stack
