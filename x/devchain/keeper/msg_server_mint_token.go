@@ -8,6 +8,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 func (k msgServer) MintToken(ctx context.Context, msg *types.MsgMintToken) (*types.MsgMintTokenResponse, error) {
@@ -17,7 +18,14 @@ func (k msgServer) MintToken(ctx context.Context, msg *types.MsgMintToken) (*typ
 		return nil, errorsmod.Wrap(err, "invalid creator address")
 	}
 
-	k
+	admin , err := k.GetAdminAddress(ctx)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "failed to get admin address")
+	}
+	if msg.Creator != admin {
+        return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only the admin can mint")
+	}
+	
 	coin := sdk.NewCoin(msg.Denom, math.NewIntFromUint64(msg.Amount))
 	if err := coin.Validate(); err != nil {
 		return nil, errorsmod.Wrap(err, "invalid coin")
