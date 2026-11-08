@@ -51,7 +51,6 @@ func (app *App) registerIBCModules(appOpts servertypes.AppOptions) error {
 		runtime.NewKVStoreService(app.GetKey(ibcexported.StoreKey)),
 		app.UpgradeKeeper,
 		govModuleAddr,
-		
 	)
 
 	// Create IBC transfer keeper

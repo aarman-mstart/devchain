@@ -8,7 +8,6 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 func (k msgServer) BurnToken(ctx context.Context, msg *types.MsgBurnToken) (*types.MsgBurnTokenResponse, error) {
@@ -16,20 +15,12 @@ func (k msgServer) BurnToken(ctx context.Context, msg *types.MsgBurnToken) (*typ
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "invalid creator address")
 	}
-	
-	admin, err := k.GetAdminAddress(ctx)
-	if err != nil {
-		return nil, errorsmod.Wrap(err, "failed to get admin address")
-	}
-	if msg.Creator != admin {
-		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only the admin can burn tokens")
-	}
 
 	coin := sdk.NewCoin(msg.Denom, math.NewIntFromUint64(msg.Amount))
 	if err := coin.Validate(); err != nil {
 		return nil, errorsmod.Wrap(err, "invalid coin")
 	}
-	
+
 	coins := sdk.NewCoins(coin)
 	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coins); err != nil {
 		return nil, errorsmod.Wrap(err, "failed to send coins from creator to module")

@@ -59,6 +59,21 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		weightMsgBurnToken,
 		devchainsimulation.SimulateMsgBurnToken(am.authKeeper, am.bankKeeper, am.keeper, simState.TxConfig),
 	))
+	const (
+		opWeightMsgSetAdmin          = "op_weight_msg_devchain"
+		defaultWeightMsgSetAdmin int = 100
+	)
+
+	var weightMsgSetAdmin int
+	simState.AppParams.GetOrGenerate(opWeightMsgSetAdmin, &weightMsgSetAdmin, nil,
+		func(_ *rand.Rand) {
+			weightMsgSetAdmin = defaultWeightMsgSetAdmin
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgSetAdmin,
+		devchainsimulation.SimulateMsgSetAdmin(am.authKeeper, am.bankKeeper, am.keeper, simState.TxConfig),
+	))
 
 	return operations
 }

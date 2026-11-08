@@ -18,14 +18,14 @@ func (k msgServer) MintToken(ctx context.Context, msg *types.MsgMintToken) (*typ
 		return nil, errorsmod.Wrap(err, "invalid creator address")
 	}
 
-	admin , err := k.GetAdminAddress(ctx)
+	admin, err := k.GetAdminAddress(ctx)
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "failed to get admin address")
 	}
 	if msg.Creator != admin {
-        return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only the admin can mint")
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only the admin can mint")
 	}
-	
+
 	coin := sdk.NewCoin(msg.Denom, math.NewIntFromUint64(msg.Amount))
 	if err := coin.Validate(); err != nil {
 		return nil, errorsmod.Wrap(err, "invalid coin")
@@ -39,6 +39,6 @@ func (k msgServer) MintToken(ctx context.Context, msg *types.MsgMintToken) (*typ
 	if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, creator, coins); err != nil {
 		return nil, errorsmod.Wrap(err, "failed to send coins to creator")
 	}
-	
+
 	return &types.MsgMintTokenResponse{}, nil
 }
